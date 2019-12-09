@@ -1,10 +1,12 @@
-FROM golang as builder
-ENV GO111MODULE=on
-WORKDIR /app
-ADD . .
-RUN go get -d -v ./...
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
+FROM golang as build-env
 
-FROM scratch
-COPY --from=builder /app /usr/bin/app
-ENTRYPOINT ["/usr/bin/app"]
+WORKDIR /go/src/app
+ADD . /go/src/app
+
+RUN go get -d -v ./...
+
+RUN go build -o /go/bin/app
+
+FROM gcr.io/distroless/base
+COPY --from=build-env /go/bin/app /
+CMD ["/app"]
