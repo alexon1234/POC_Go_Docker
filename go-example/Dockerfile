@@ -1,9 +1,13 @@
-FROM golang:alpine AS builder
-RUN apk update && apk add --no-cache gitWORKDIR $GOPATH/src/mypackage/myapp/
-COPY . .
-RUN go get -d -v
-RUN GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o /go/bin/hello
+FROM golang as builder
+ENV GO111MODULE=on
+WORKDIR /app
+ADD go.mod go.sum /app/
+RUN go mod download
+ADD . .
+RUN go build -o /app main.go
 
-FROM scratch
-COPY --from=builder /go/bin/hello /go/bin/hello
-ENTRYPOINT ["/go/bin/hello"]
+FROM gcr.io/distroless/base
+EXPOSE 8080
+WORKDIR /
+COPY --from=builder /app /usr/bin/app
+ENTRYPOINT ["/usr/bin/app"]
