@@ -4,9 +4,9 @@ WORKDIR /app
 ADD go.mod go.sum /app/
 RUN go mod download
 ADD . .
-RUN go build -o /app main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
 
-FROM gcr.io/distroless/base
+FROM scratch
 EXPOSE 8080
 WORKDIR /
 COPY --from=builder /app /usr/bin/app
