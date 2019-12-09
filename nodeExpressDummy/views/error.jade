@@ -1,0 +1,6 @@
+extends layout
+
+block content
+  h1.text-white= message
+  h2.text-white= error.status
+  pre.text-white #{error.stack}
