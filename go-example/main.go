@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"encoding/json"
 	"log"
 	"net/http"
 	"os"
@@ -33,12 +33,12 @@ func main() {
 
 func hello(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(struct{
-		Text string
+	_ = json.NewEncoder(w).Encode(struct {
+		Text     string
 		IsEnvSet bool
 	}{
-		Text: "Hello World!",
-		IsEnvSet: isEnvSet
+		Text:     "Hello World!",
+		IsEnvSet: isEnvSet,
 	})
 }
 
