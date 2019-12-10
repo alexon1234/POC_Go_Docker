@@ -9,19 +9,14 @@ import (
 
 	"github.com/go-redis/redis"
 	"github.com/gorilla/mux"
-	// "github.com/joho/godotenv"
 	"github.com/streadway/amqp"
 )
 
-var isEnvSet bool = true
-
 func main() {
-	// if err := godotenv.Load(); err != nil {
-	// 	isEnvSet = false
-	// }
-
-	if isEnvSet {
+	if len(os.Getenv("REDIS_HOST")) > 0 {
 		ConnectRedis()
+	}
+	if len(os.Getenv("AMQP_HOST")) > 0 {
 		ConnectRabbitMQ()
 	}
 
@@ -34,11 +29,13 @@ func main() {
 func hello(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	_ = json.NewEncoder(w).Encode(struct {
-		Text     string
-		IsEnvSet bool
+		DummyText    string
+		RedisHost    string
+		RabbitmqHost string
 	}{
-		Text:     "Hello World!",
-		IsEnvSet: isEnvSet,
+		DummyText:    "Hello World!",
+		RedisHost:    os.Getenv("REDIS_HOST"),
+		RabbitmqHost: os.Getenv("AMQP_HOST"),
 	})
 }
 
