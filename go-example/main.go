@@ -9,16 +9,16 @@ import (
 
 	"github.com/go-redis/redis"
 	"github.com/gorilla/mux"
-	"github.com/joho/godotenv"
+	// "github.com/joho/godotenv"
 	"github.com/streadway/amqp"
 )
 
 var isEnvSet bool = true
 
 func main() {
-	if err := godotenv.Load(); err != nil {
-		isEnvSet = false
-	}
+	// if err := godotenv.Load(); err != nil {
+	// 	isEnvSet = false
+	// }
 
 	if isEnvSet {
 		ConnectRedis()
