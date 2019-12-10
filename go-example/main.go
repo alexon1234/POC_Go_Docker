@@ -13,13 +13,17 @@ import (
 	"github.com/streadway/amqp"
 )
 
+var isEnvSet bool = true
+
 func main() {
 	if err := godotenv.Load(); err != nil {
-		panic("Need to set up enviroment variables")
+		isEnvSet = false
 	}
 
-	ConnectRedis()
-	ConnectRabbitMQ()
+	if isEnvSet {
+		ConnectRedis()
+		ConnectRabbitMQ()
+	}
 
 	router := mux.NewRouter()
 	router.HandleFunc("/", hello)
@@ -28,7 +32,14 @@ func main() {
 }
 
 func hello(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Hello World!")
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(struct{
+		Text string
+		IsEnvSet bool
+	}{
+		Text: "Hello World!",
+		IsEnvSet: isEnvSet
+	})
 }
 
 func ConnectRedis() {
