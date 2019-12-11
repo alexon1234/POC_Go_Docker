@@ -63,25 +63,25 @@ func ConnectRabbitMQ() {
 	}
 	defer conn.Close()
 	log.Println("RabbitMQ connected")
-	ch, err := conn.Channel()
-	if err != nil {
-		panic(err)
-	}
-
-	err = ch.ExchangeDeclare(
-		"test_exchange",
-		"fanout",
-		true,
-		false,
-		false,
-		false,
-		nil,
-	)
-	if err != nil {
-		panic(err)
-	}
 
 	for {
+		ch, err := conn.Channel()
+		if err != nil {
+			panic(err)
+		}
+
+		err = ch.ExchangeDeclare(
+			"test_exchange",
+			"fanout",
+			true,
+			false,
+			false,
+			false,
+			nil,
+		)
+		if err != nil {
+			panic(err)
+		}
 		err = ch.Publish(
 			"test_exchange",
 			"",
