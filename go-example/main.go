@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/go-redis/redis"
 	"github.com/gorilla/mux"
@@ -62,4 +63,39 @@ func ConnectRabbitMQ() {
 	}
 	defer conn.Close()
 	log.Println("RabbitMQ connected")
+	ch, err := conn.Channel()
+	if err != nil {
+		panic(err)
+	}
+
+	err = ch.ExchangeDeclare(
+		"test_exchange",
+		"fanout",
+		true,
+		false,
+		false,
+		false,
+		nil,
+	)
+	if err != nil {
+		panic(err)
+	}
+
+	for {
+		err = ch.Publish(
+			"test_exchange",
+			"",
+			true,
+			true,
+			amqp.Publishing{
+				Body: []byte("Hello World!"),
+			},
+		)
+		if err != nil {
+			panic(err)
+		}
+		log.Println("Published message")
+
+		time.Sleep(1 * time.Second)
+	}
 }
