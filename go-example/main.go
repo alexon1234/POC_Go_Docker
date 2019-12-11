@@ -57,14 +57,13 @@ func ConnectRedis() {
 }
 
 func ConnectRabbitMQ() {
-	conn, err := amqp.Dial(os.Getenv("AMQP_HOST"))
-	if err != nil {
-		panic(err)
-	}
-	defer conn.Close()
-	log.Println("RabbitMQ connected")
-
 	for {
+		conn, err := amqp.Dial(os.Getenv("AMQP_HOST"))
+		if err != nil {
+			panic(err)
+		}
+		log.Println("RabbitMQ connected")
+
 		ch, err := conn.Channel()
 		if err != nil {
 			panic(err)
